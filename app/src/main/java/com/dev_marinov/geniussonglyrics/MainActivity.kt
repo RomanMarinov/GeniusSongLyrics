@@ -1,8 +1,6 @@
 package com.dev_marinov.geniussonglyrics
 
-import android.app.ActivityOptions
 import android.app.Dialog
-import android.content.Intent
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -13,19 +11,7 @@ import android.view.*
 import android.widget.Button
 import android.widget.ProgressBar
 import androidx.core.content.ContextCompat
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowCompat
 import androidx.transition.*
-import com.google.android.material.circularreveal.CircularRevealCompat
-import com.google.android.material.circularreveal.CircularRevealFrameLayout
-import com.google.android.material.circularreveal.CircularRevealWidget
-import java.sql.Array
-import kotlin.math.max
-import android.transition.CircularPropagation as TransitionCircularPropagation
-import androidx.transition.TransitionPropagation as TransitionPropagation1
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.WindowInsetsControllerCompat
-import androidx.fragment.app.FragmentManager
 
 
 class MainActivity : AppCompatActivity() {
@@ -40,6 +26,16 @@ class MainActivity : AppCompatActivity() {
 
     lateinit var viewGroup: ViewGroup
     lateinit var handler: Handler
+
+
+
+
+
+//    companion object {
+//        @JvmStatic
+//        var interFaceAdapter: InterFaceAdapter? = null
+//    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -223,4 +219,17 @@ class MainActivity : AppCompatActivity() {
 
 
     }
+
+    interface InterFaceAdapter {
+        fun myInterFaceAdapter()
+    }
+
+    fun setInterFaceAdapter(myinterFaceAdapter: InterFaceAdapter) {
+        Companion.interFaceAdapter = myinterFaceAdapter
+    }
+
+    companion object {
+        lateinit var interFaceAdapter: InterFaceAdapter
+    }
+    
 }

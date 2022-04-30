@@ -20,15 +20,14 @@ class AdapterList (val context: Context, var hashMap: HashMap<Int, ObjectList> =
                    val rv: RecyclerView) : RecyclerView.Adapter<AdapterList.ViewHolder>() {
 
     var flagLoading: Boolean = true
-    private val totalCountItem = 0 // сколько всего элементов-----------
-    private val lastVisibleItem = 0 // сколько отображено(загружено)---------
-    private val firstVisibleItem = 0 // сколько отображено(загружено)----------
-    private var onLoadMoreListener: OnLoadMoreListener? = null
-
-
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AdapterList.ViewHolder {
+
+        Log.e("333", "-зашел onCreateViewHolder=")
+
         val view: View = LayoutInflater.from(parent.context).inflate(R.layout.rv_list, parent, false)
+
+
         return ViewHolder(view)
     }
 
@@ -82,6 +81,7 @@ class AdapterList (val context: Context, var hashMap: HashMap<Int, ObjectList> =
     }
 
     override fun getItemCount(): Int {
+        Log.e("333", "-зашел hashMap.size=" + hashMap.size)
         return hashMap.size
     }
 
@@ -93,18 +93,9 @@ class AdapterList (val context: Context, var hashMap: HashMap<Int, ObjectList> =
         val btSong: Button = itemView.findViewById(R.id.btSong)
         val btSinger: Button = itemView.findViewById(R.id.btSinger)
 
+
     }
 
-    // интерфейс для запуска метода во fragmentList запроса offset + 20 на сервер
-    interface OnLoadMoreListener {
-        fun onLoadMore()
-    }
 
-    fun setOnLoadMoreListener(mOnLoadMoreListener: OnLoadMoreListener?) {
-        onLoadMoreListener = mOnLoadMoreListener
-    }
 
-    fun setLoading() {
-        flagLoading = false
-    }
 }
