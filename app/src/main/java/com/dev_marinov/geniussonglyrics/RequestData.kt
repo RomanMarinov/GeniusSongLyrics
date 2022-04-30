@@ -7,7 +7,7 @@ import org.json.JSONObject
 import java.io.IOException
 import java.lang.Exception
 
-class RequestData(context: Context?) {
+class RequestData() {
 
     fun getData(num: Int, context: Context?) { // метод получения данных из сети
         Log.e("333", "-зашел getData-")
@@ -60,27 +60,14 @@ class RequestData(context: Context?) {
                             val urlPageArtist = jsonObject.getJSONObject("response").getJSONArray("songs")
                                 .getJSONObject(n).getJSONObject("primary_artist").getString("url")
 
-                            //Log.e("Name", "artist" + artist);
-
                             (context as MainActivity?)?.hashMap?.set(n,
                                 ObjectList(newArtist2, urlPictureSong, title, urlPageSong, urlPageArtist))
                         }
 
-                           // MainActivity.InterFaceAdapter.myInterFaceAdapter()
-
-
-
-
                         (context as MainActivity?)?.runOnUiThread {
-                            val mainActivity: MainActivity = MainActivity()
-                            MainActivity.interFaceAdapter?.myInterFaceAdapter()
+                            MainActivity.interFaceAdapter.myInterFaceAdapter()
                             Log.e("333", "должен был сработать myInterFaceAdapter()")
-
-//                            adapterList.notifyDataSetChanged()
-//                            //adapterList.setLoading() // присваиваем flagLoading = false в методе setLoading()
-//                            flagLoading = false // это значит что новые данные записались в hashMap
                         }
-
 
                     } catch (e: Exception) {
                         Log.e("Name", "try catch$e")

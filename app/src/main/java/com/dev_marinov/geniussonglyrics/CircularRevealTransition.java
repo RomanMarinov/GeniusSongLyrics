@@ -9,13 +9,13 @@ import android.view.ViewGroup;
 import androidx.transition.TransitionValues;
 import androidx.transition.Visibility;
 
+// класс движения view при загрузке
 public class CircularRevealTransition extends Visibility {
 
     @Override
     public Animator onAppear(ViewGroup sceneRoot, View view, TransitionValues startValues, TransitionValues endValues) {
         int startRadius = 0;
         int endRadius = (int) Math.hypot(view.getWidth(), view.getHeight());
-
 
         Animator reveal = ViewAnimationUtils.createCircularReveal(view, view.getWidth() / 2, view.getHeight() / 2, startRadius, endRadius);
         // делаем представление невидимым до тех пор, пока не начнется анимация

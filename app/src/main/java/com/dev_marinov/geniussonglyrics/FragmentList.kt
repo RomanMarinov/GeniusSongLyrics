@@ -22,7 +22,7 @@ class FragmentList : Fragment() {
     lateinit var lastVisibleItemPositions: IntArray // массив для помощи в передачи последнего видимомо элемента
     var totalCountItem: Int = 0
 
-    var flagLoading: Boolean = true
+    var flagLoading: Boolean = true // булева для работы с offset запросами +20 элементов в recyclerView
 
     var myViewGroup: ViewGroup? = null
     // layoutInflater класс, используемый для преобразования XML-файла макета в объекты представления динамическим способом
@@ -37,7 +37,6 @@ class FragmentList : Fragment() {
         // отображать желаемую разметку и возвращать view в initInterface .
         // onCreateView() возвращает объект View, который является корневым элементом разметки фрагмента.
         return initInterface()
-
     }
 
     // https://stackoverflow.com/questions/54266160/changing-a-recyclerviews-layout-upon-orientation-change-only-works-on-the-first
@@ -62,7 +61,7 @@ class FragmentList : Fragment() {
         if ((activity as MainActivity?)?.hashMap?.size == 0) {
             Log.e("333", "arrayList.size()=" + (activity as MainActivity?)?.hashMap?.size)
             //getData(z);/// + 20;
-            val requestData = RequestData(context)
+            val requestData = RequestData()
             requestData.getData(z, context) /// + 20;
         } else {
             Log.e("333", "FragmentHome arrayList.size()  НЕ ПУСТОЙ=")
@@ -71,11 +70,10 @@ class FragmentList : Fragment() {
         return view // в onCreateView() возвращаем объект View, который является корневым элементом разметки фрагмента.
     }
 
-
     override fun onConfigurationChanged(newConfig: Configuration) {
         Log.e("333", "-зашел FragmentHome onConfigurationChanged-")
         // ДО СОЗДАНИЯ НОВОГО МАКЕТА ПИШЕМ ПЕРЕМЕННЫЕ В КОТОРЫЕ СОХРАНЯЕМ ЛЮБЫЕ ДАННЫЕ ИЗ ТЕКУЩИХ VIEW
-//        // создать новый макет------------------------------
+        // создать новый макет------------------------------
         val view: View = initInterface()!!
         // ПОСЛЕ СОЗДАНИЯ НОВОГО МАКЕТА ПЕРЕДАЕМ СОХРАНЕННЫЕ ДАННЫЕ В СТАРЫЕ(ТЕ КОТОРЫЕ ТЕКУЩИЕ) VIEW
         // отображать новую раскладку на экране
@@ -95,33 +93,18 @@ class FragmentList : Fragment() {
         staggeredGridLayoutManager = StaggeredGridLayoutManager(column, StaggeredGridLayoutManager.VERTICAL)
         recyclerView?.setLayoutManager(staggeredGridLayoutManager)
 
-        adapterList = AdapterList(this.requireActivity(), (activity as MainActivity?)!!.hashMap, recyclerView!!)
+        adapterList = AdapterList(this.requireActivity(), (activity as MainActivity?)!!.hashMap)
         recyclerView?.adapter = adapterList
 
-
+            // этот интерфейс сработает тогда когда заполниться hashmap
+            // тут обновиться адаптер и измениться flagLoading
         (activity as MainActivity).setInterFaceAdapter(object : MainActivity.InterFaceAdapter {
             override fun myInterFaceAdapter() {
                 Log.e("333", "-зашел setInterFaceAdapter(object : MainActivity-")
-
-//                        (activity as MainActivity?)?.runOnUiThread {
-//
-//
-//                            adapterList.notifyDataSetChanged()
-//                            //adapterList.setLoading() // присваиваем flagLoading = false в методе setLoading()
-//                            flagLoading = false // это значит что новые данные записались в hashMap
-//                        }
-
-
-
                     adapterList.notifyDataSetChanged()
                     flagLoading = false
             }
         })
-
-
-
-
-
 
         // слушатель RecyclerView для получения последнего видимомого элемента, чтобы использовать при повороте
         val mScrollListener: RecyclerView.OnScrollListener = object : RecyclerView.OnScrollListener() {
@@ -147,14 +130,13 @@ class FragmentList : Fragment() {
                         Log.e("333", "-зашел offset-")
                         z = z + 20 // переменная для увеличения значения offset
 
-                        val requestData: RequestData = RequestData(context)
+                        val requestData: RequestData = RequestData()
                         requestData.getData(z, context) /// + 20;
                     }
                     Handler(Looper.getMainLooper()).postDelayed(runnable, 100)
 
                     flagLoading = true // и возвращаю flagLoading в исходное состояние
                 }
-
             }
             fun getMaxPosition(positions: IntArray): Int {
                 return positions[0]

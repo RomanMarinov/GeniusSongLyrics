@@ -16,18 +16,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.MemoryPolicy
 import com.squareup.picasso.Picasso
 
-class AdapterList (val context: Context, var hashMap: HashMap<Int, ObjectList> = HashMap<Int, ObjectList>(),
-                   val rv: RecyclerView) : RecyclerView.Adapter<AdapterList.ViewHolder>() {
-
-    var flagLoading: Boolean = true
+class AdapterList (val context: Context, var hashMap: HashMap<Int, ObjectList> = HashMap<Int, ObjectList>(),)
+    : RecyclerView.Adapter<AdapterList.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AdapterList.ViewHolder {
-
-        Log.e("333", "-зашел onCreateViewHolder=")
-
         val view: View = LayoutInflater.from(parent.context).inflate(R.layout.rv_list, parent, false)
-
-
         return ViewHolder(view)
     }
 
@@ -35,10 +28,10 @@ class AdapterList (val context: Context, var hashMap: HashMap<Int, ObjectList> =
         val objectList = hashMap[position]
 
         if (objectList != null) {
-            holder.cardView.animation = AnimationUtils.loadAnimation(context, R.anim.scale_up_1)
-            holder.img.animation = AnimationUtils.loadAnimation(context, R.anim.scale_up_1)
-            holder.tvTitle.animation = AnimationUtils.loadAnimation(context, R.anim.scale_up_1)
-            holder.tvArtist.animation = AnimationUtils.loadAnimation(context, R.anim.scale_up_1)
+            holder.cardView.animation = AnimationUtils.loadAnimation(context, R.anim.scale_up_1) // анимация
+            holder.img.animation = AnimationUtils.loadAnimation(context, R.anim.scale_up_1) // анимация
+            holder.tvTitle.animation = AnimationUtils.loadAnimation(context, R.anim.scale_up_1) // анимация
+            holder.tvArtist.animation = AnimationUtils.loadAnimation(context, R.anim.scale_up_1) // анимация
 
             holder.tvArtist.text = objectList.nameArtist
             holder.tvTitle.text = objectList.title
@@ -92,10 +85,6 @@ class AdapterList (val context: Context, var hashMap: HashMap<Int, ObjectList> =
         val cardView: CardView = itemView.findViewById(R.id.cardView)
         val btSong: Button = itemView.findViewById(R.id.btSong)
         val btSinger: Button = itemView.findViewById(R.id.btSinger)
-
-
     }
-
-
 
 }

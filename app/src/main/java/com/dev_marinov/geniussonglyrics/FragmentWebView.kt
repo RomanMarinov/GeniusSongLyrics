@@ -15,14 +15,13 @@ import android.webkit.WebView.HitTestResult
 import android.webkit.WebViewClient
 import android.webkit.WebSettings
 
-
-
-
+@SuppressLint("SetJavaScriptEnabled")
 class FragmentWebView : Fragment() {
 
     var myUrl: String? = ""
     var mLastUrl: String? = ""
     lateinit var webView: WebView
+    val webSettings: WebSettings? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         Log.e("333", "зашел в FragmentWebView")
@@ -31,6 +30,8 @@ class FragmentWebView : Fragment() {
         view = inflater.inflate(R.layout.fragment_web_view, container, false)
         (activity as MainActivity).flag = true
         webView = view.findViewById<WebView>(R.id.webview)
+
+        webView.settings.javaScriptEnabled = true // поддержка джава скрипт для работы с сайтами
 
         Log.e("333", "webView.loadUrl = " + myUrl)
         webView.loadUrl(myUrl!!)

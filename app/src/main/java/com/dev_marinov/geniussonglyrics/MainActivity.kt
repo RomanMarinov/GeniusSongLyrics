@@ -21,21 +21,11 @@ class MainActivity : AppCompatActivity() {
     var flag: Boolean = false
     var lastVisibleItem: Int? = 0
 
-    lateinit var btYes: Button // lateinit отложенная инициализация
-    lateinit var btNo: Button // lateinit отложенная инициализация
+    lateinit var btYes: Button
+    lateinit var btNo: Button
 
     lateinit var viewGroup: ViewGroup
     lateinit var handler: Handler
-
-
-
-
-
-//    companion object {
-//        @JvmStatic
-//        var interFaceAdapter: InterFaceAdapter? = null
-//    }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,13 +44,10 @@ class MainActivity : AppCompatActivity() {
         // берем белый frameLayout, который растянут во весь экран и который находиться в activity_main
         viewGroup = findViewById(R.id.fl_viewGroup)
 
-        showScene1(false)
-
+        showScene1() // сцена 1
     }
 
-
-
-    fun showScene1(bool: Boolean){
+    fun showScene1(){
 
         // scene_animation_1 - это белый FrameLayout только с progress_bar_scene
         // Чтобы избежать исключений, оператор безопасного as? приведения , который возвращается nullв случае сбоя.
@@ -220,6 +207,7 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    // интерфейс для срабатывания notifyDataSetChanged после заполнения hashmap данными
     interface InterFaceAdapter {
         fun myInterFaceAdapter()
     }
@@ -228,8 +216,8 @@ class MainActivity : AppCompatActivity() {
         Companion.interFaceAdapter = myinterFaceAdapter
     }
 
-    companion object {
+    companion object { // статический интерфейс
         lateinit var interFaceAdapter: InterFaceAdapter
     }
-    
+
 }
