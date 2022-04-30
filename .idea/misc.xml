@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/I_AM/PROFESSION_DEVELOPER/MY_PROJECTS/TEST_PROJECTS/GeniusSongLyrics/app/src/main/res/drawable/background_message.xml" value="0.24010416666666667" />
+        <entry key="..\:/I_AM/PROFESSION_DEVELOPER/MY_PROJECTS/TEST_PROJECTS/GeniusSongLyrics/app/src/main/res/drawable/gradient.xml" value="0.24010416666666667" />
+        <entry key="..\:/I_AM/PROFESSION_DEVELOPER/MY_PROJECTS/TEST_PROJECTS/GeniusSongLyrics/app/src/main/res/drawable/ic_launcher_background.xml" value="0.24010416666666667" />
+        <entry key="..\:/I_AM/PROFESSION_DEVELOPER/MY_PROJECTS/TEST_PROJECTS/GeniusSongLyrics/app/src/main/res/drawable/rounded_edittext.xml" value="0.24010416666666667" />
+        <entry key="..\:/I_AM/PROFESSION_DEVELOPER/MY_PROJECTS/TEST_PROJECTS/GeniusSongLyrics/app/src/main/res/font/aclonica.xml" value="0.14010416666666667" />
+        <entry key="..\:/I_AM/PROFESSION_DEVELOPER/MY_PROJECTS/TEST_PROJECTS/GeniusSongLyrics/app/src/main/res/font/bangers.xml" value="0.25416666666666665" />
+        <entry key="..\:/I_AM/PROFESSION_DEVELOPER/MY_PROJECTS/TEST_PROJECTS/GeniusSongLyrics/app/src/main/res/font/ribeye_marrow.xml" value="0.14010416666666667" />
+        <entry key="..\:/I_AM/PROFESSION_DEVELOPER/MY_PROJECTS/TEST_PROJECTS/GeniusSongLyrics/app/src/main/res/layout/activity_2.xml" value="0.13823999578125012" />
+        <entry key="..\:/I_AM/PROFESSION_DEVELOPER/MY_PROJECTS/TEST_PROJECTS/GeniusSongLyrics/app/src/main/res/layout/activity_main.xml" value="0.20989583333333334" />
+        <entry key="..\:/I_AM/PROFESSION_DEVELOPER/MY_PROJECTS/TEST_PROJECTS/GeniusSongLyrics/app/src/main/res/layout/fragment_list.xml" value="0.22395833333333334" />
+        <entry key="..\:/I_AM/PROFESSION_DEVELOPER/MY_PROJECTS/TEST_PROJECTS/GeniusSongLyrics/app/src/main/res/layout/fragment_web_view.xml" value="0.10989583333333333" />
+        <entry key="..\:/I_AM/PROFESSION_DEVELOPER/MY_PROJECTS/TEST_PROJECTS/GeniusSongLyrics/app/src/main/res/layout/rv_list.xml" value="0.38399998828125037" />
+        <entry key="..\:/I_AM/PROFESSION_DEVELOPER/MY_PROJECTS/TEST_PROJECTS/GeniusSongLyrics/app/src/main/res/layout/scene_animation_1.xml" value="0.22395833333333334" />
+        <entry key="..\:/I_AM/PROFESSION_DEVELOPER/MY_PROJECTS/TEST_PROJECTS/GeniusSongLyrics/app/src/main/res/layout/scene_animation_2.xml" value="0.1" />
+        <entry key="..\:/I_AM/PROFESSION_DEVELOPER/MY_PROJECTS/TEST_PROJECTS/GeniusSongLyrics/app/src/main/res/layout/windows_alertdialog.xml" value="0.22395833333333334" />
+      </map>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/build/classes" />
+  </component>
+  <component name="ProjectType">
+    <option name="id" value="Android" />
+  </component>
+</project>

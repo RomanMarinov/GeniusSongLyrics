@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="fab_margin">16dp</dimen>
+    <integer name="card_flip_duration_full">1000</integer>
+    <integer name="card_flip_duration_half">500</integer>
+
+</resources>
