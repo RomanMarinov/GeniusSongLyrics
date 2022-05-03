@@ -5,7 +5,7 @@
 Реализован WebView, backstack, animation, поворот экрана, память recyclerView.
 
 ## Работа с кодом 
-Клиентская часть: android studio kotlin
+Клиентская часть: android studio kotlin. Запрос api.
 
 ## Скрины экрана 
 
