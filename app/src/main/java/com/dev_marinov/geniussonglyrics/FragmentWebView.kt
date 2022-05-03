@@ -21,7 +21,6 @@ class FragmentWebView : Fragment() {
     var myUrl: String? = ""
     var mLastUrl: String? = ""
     lateinit var webView: WebView
-    val webSettings: WebSettings? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         Log.e("333", "зашел в FragmentWebView")

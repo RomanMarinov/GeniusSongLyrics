@@ -16,7 +16,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.MemoryPolicy
 import com.squareup.picasso.Picasso
 
-class AdapterList (val context: Context, var hashMap: HashMap<Int, ObjectList> = HashMap<Int, ObjectList>(),)
+class AdapterList (val context: Context, var hashMap: HashMap<Int, ObjectList> = HashMap<Int, ObjectList>())
     : RecyclerView.Adapter<AdapterList.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AdapterList.ViewHolder {
