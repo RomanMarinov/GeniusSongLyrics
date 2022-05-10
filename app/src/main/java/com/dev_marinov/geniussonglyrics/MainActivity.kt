@@ -203,8 +203,6 @@ class MainActivity : AppCompatActivity() {
             dialog.dismiss()
             finish()
         }
-
-
     }
 
     // интерфейс для срабатывания notifyDataSetChanged после заполнения hashmap данными

@@ -114,7 +114,7 @@ class FragmentList : Fragment() {
                 totalCountItem = staggeredGridLayoutManager?.itemCount!!
 
                 // эта часть отвечет только за передачу последнего видимомо элемента
-                lastVisibleItemPositions = staggeredGridLayoutManager?.findLastVisibleItemPositions(null)!!
+                lastVisibleItemPositions = staggeredGridLayoutManager?.findFirstVisibleItemPositions(null)!!
                 //Log.e("zzz","-lastVisibleItemPositions=" + lastVisibleItemPositions.length);
                 (context as MainActivity).lastVisibleItem = getMaxPosition(lastVisibleItemPositions)
 
