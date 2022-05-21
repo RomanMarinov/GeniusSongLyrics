@@ -1,4 +1,4 @@
-package com.dev_marinov.geniussonglyrics
+package com.dev_marinov.geniussonglyrics.presentation
 
 import android.app.Dialog
 import android.os.Build
@@ -11,15 +11,19 @@ import android.view.*
 import android.widget.Button
 import android.widget.ProgressBar
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.ViewModelProvider
 import androidx.transition.*
+import com.dev_marinov.geniussonglyrics.CircularRevealTransition
+import com.dev_marinov.geniussonglyrics.R
 
 
 class MainActivity : AppCompatActivity() {
 
-    lateinit var hashMap: HashMap<Int, ObjectList>
+    lateinit var viewModelFlagBackPressed: ViewModelFlagBackPressed
+    lateinit var viewModelWebViewUrlCopy: ViewModelWebViewUrlCopy
+
     lateinit var previous: MutableList<String>
     var flag: Boolean = false
-    var lastVisibleItem: Int? = 0
 
     lateinit var btYes: Button
     lateinit var btNo: Button
@@ -27,14 +31,20 @@ class MainActivity : AppCompatActivity() {
     lateinit var viewGroup: ViewGroup
     lateinit var handler: Handler
 
+    var mySavedInstanceState: Bundle? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         Log.e("333", "создалась MainActivity")
+        mySavedInstanceState = savedInstanceState
+
+        viewModelFlagBackPressed = ViewModelProvider(this).get(ViewModelFlagBackPressed::class.java)
+        viewModelWebViewUrlCopy = ViewModelProvider(this).get(ViewModelWebViewUrlCopy::class.java)
 
         handler = Handler(Looper.getMainLooper())
-        hashMap = HashMap<Int, ObjectList>()
+
         previous = ArrayList<String>()
 
         setWindow() // сетинг для статус бара и для бара навигации
@@ -44,11 +54,25 @@ class MainActivity : AppCompatActivity() {
         // берем белый frameLayout, который растянут во весь экран и который находиться в activity_main
         viewGroup = findViewById(R.id.fl_viewGroup)
 
+            // интерфейс для утсановки булево для флага
+        setInterFaceFlagWebView(object :MainActivity.MyInterFaceFlagWebView {
+            override fun methodMyInterFaceFlagWebView(myFlag: Boolean) {
+                viewModelFlagBackPressed.flag = myFlag // установка на true
+            }
+        })
+
+        // интерфейс для получения массива url переходов, когда работаю во webview
+            // чтобы записать его копию в другую viewmodel и использовать в onbackpressed
+        setInterFaceWebViewSendArrayListUrl(object : MainActivity.MyInterFaceWebViewSendArrayListUrl{
+            override fun methodMyInterFaceWebViewSendArrayListUrl(arrayList: ArrayList<String>) {
+                viewModelWebViewUrlCopy.arrayListPreviousUrlCopy = arrayList
+            }
+        })
+
         showScene1() // сцена 1
     }
 
     fun showScene1(){
-
         // scene_animation_1 - это белый FrameLayout только с progress_bar_scene
         // Чтобы избежать исключений, оператор безопасного as? приведения , который возвращается nullв случае сбоя.
         val root = layoutInflater.inflate(R.layout.scene_animation_1, viewGroup, false) as? ViewGroup
@@ -80,21 +104,22 @@ class MainActivity : AppCompatActivity() {
 
         // как только scene_animation_2 закончила показ, через 0.5 сек мы переходим в FragmentMain
         val runnable = Runnable {
-            val fragmentList = FragmentList()
-            val fragmentManager = supportFragmentManager
-            val fragmentTransaction = fragmentManager.beginTransaction()
-            fragmentTransaction.add(R.id.llFragList, fragmentList)
-            fragmentTransaction.commit()
+            if (mySavedInstanceState == null) {
+                val fragmentList = FragmentList()
+                val fragmentManager = supportFragmentManager
+                val fragmentTransaction = fragmentManager.beginTransaction()
+                fragmentTransaction.add(R.id.llFragList, fragmentList)
+                fragmentTransaction.commit()
+            }
         }
         Handler(Looper.getMainLooper()).postDelayed(runnable, 500)
-
     }
 
     fun getScene2Transition() : Transition {
-        val transitionSet: TransitionSet = TransitionSet()
+        val transitionSet = TransitionSet()
 
         //ChangeBounds переход, меняет позицию
-        val changeBounds: ChangeBounds = ChangeBounds()
+        val changeBounds = ChangeBounds()
         changeBounds.addListener(object : TransitionListenerAdapter() {
             override fun onTransitionEnd(transition: Transition) {
                 Log.e("333", "зашел getScene2Transition changeTransform.addListener")
@@ -136,8 +161,6 @@ class MainActivity : AppCompatActivity() {
         window.navigationBarColor  = ContextCompat.getColor(this, android.R.color.black); // черный бар навигации
     }
 
-
-
     private fun hideSystemUI() {
         // если сдк устройства больше или равно сдк приложения
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -155,39 +178,38 @@ class MainActivity : AppCompatActivity() {
                     // Hide the nav bar and status bar
                     //or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                     //or View.SYSTEM_UI_FLAG_FULLSCREEN
-                    )
+            )
         }
     }
 
-
-    override fun onBackPressed() {
-        if(flag) {
-            val size = previous.size
+  override fun onBackPressed() {
+        if(viewModelFlagBackPressed.flag) {
+            val size = viewModelWebViewUrlCopy.arrayListPreviousUrlCopy.size
             if(size > 0) {
                 val fragmentWebView: FragmentWebView = supportFragmentManager.findFragmentById(R.id.llFragWebView) as FragmentWebView
                 if(fragmentWebView != null) {
-                    Log.e("333", " onBackPressed size > 0 и previous[size - 1]=" + (previous[size - 1]))
-                    fragmentWebView.webView.loadUrl(previous[size - 1])
+                    //Log.e("333", " onBackPressed size > 0 и previous[size - 1]=" + (previous[size - 1]))
+                    fragmentWebView.webView.loadUrl(viewModelWebViewUrlCopy.arrayListPreviousUrlCopy[size - 1])
                 }
                 // removeAt Удаляет элемент по указанному индексу из списка. remove - устарело
                 Log.e("333", " previous.removeAt до удаления =" + (size - 1))
-                previous.removeAt(size - 1)
+                viewModelWebViewUrlCopy.arrayListPreviousUrlCopy.removeAt(size - 1)
                 Log.e("333", " previous.removeAt после удаления =" + (size - 1))
             }
             else{
-                flag = false
+                viewModelFlagBackPressed.flag = false
                 Log.e("333", "super.onBackPressed")
                 super.onBackPressed()
             }
         }
-        else if(!flag) { //  если flag false значит работаем с backstack fragment
+        else if(!viewModelFlagBackPressed.flag) { //  если flag false значит работаем с backstack fragment
             supportFragmentManager.popBackStack() // удаление фрагментов из транзакции
             myAlertDialog() // метод реализации диалога с пользователем закрыть приложение или нет
         }
     }
 
     fun myAlertDialog() {
-        val dialog: Dialog = Dialog(this@MainActivity)
+        val dialog = Dialog(this@MainActivity)
         dialog.setContentView(R.layout.windows_alertdialog)
         dialog.setCancelable(false)
         dialog.show()
@@ -205,17 +227,33 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // интерфейс для срабатывания notifyDataSetChanged после заполнения hashmap данными
-    interface InterFaceAdapter {
-        fun myInterFaceAdapter()
-    }
-
-    fun setInterFaceAdapter(myinterFaceAdapter: InterFaceAdapter) {
-        Companion.interFaceAdapter = myinterFaceAdapter
-    }
-
     companion object { // статический интерфейс
-        lateinit var interFaceAdapter: InterFaceAdapter
+        lateinit var myInterFaceAdapter: MyInterFaceAdapter
+        lateinit var myInterFaceFlagWebView: MyInterFaceFlagWebView
+        lateinit var myInterFaceWebViewSendArrayListUrl: MyInterFaceWebViewSendArrayListUrl
+    }
+    // интерфейс для срабатывания notifyDataSetChanged после заполнения hashmap данными
+    interface MyInterFaceAdapter {
+        fun methodMyInterFaceAdapter()
+    }
+    fun setInterFaceAdapter(myInterFaceAdapter: MyInterFaceAdapter) {
+        Companion.myInterFaceAdapter = myInterFaceAdapter
     }
 
+
+    // интерфейс для срабатывания notifyDataSetChanged после заполнения hashmap данными
+    interface MyInterFaceFlagWebView {
+        fun methodMyInterFaceFlagWebView(myFlag: Boolean)
+    }
+    fun setInterFaceFlagWebView(myInterFaceFlagWebView: MyInterFaceFlagWebView) {
+        Companion.myInterFaceFlagWebView = myInterFaceFlagWebView
+    }
+
+    // интерфейс для срабатывания notifyDataSetChanged после заполнения hashmap данными
+    interface MyInterFaceWebViewSendArrayListUrl {
+        fun methodMyInterFaceWebViewSendArrayListUrl(arrayList: ArrayList<String>)
+    }
+    fun setInterFaceWebViewSendArrayListUrl(myInterFaceWebViewSendArrayListUrl: MyInterFaceWebViewSendArrayListUrl) {
+        Companion.myInterFaceWebViewSendArrayListUrl = myInterFaceWebViewSendArrayListUrl
+    }
 }

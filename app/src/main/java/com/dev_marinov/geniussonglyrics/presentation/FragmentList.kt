@@ -1,4 +1,4 @@
-package com.dev_marinov.geniussonglyrics
+package com.dev_marinov.geniussonglyrics.presentation
 
 import android.content.res.Configuration
 import android.os.Bundle
@@ -9,18 +9,22 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
-import java.lang.Exception
+import com.dev_marinov.geniussonglyrics.R
 
 class FragmentList : Fragment() {
+
+    lateinit var viewModelSharedUrl: ViewModelSharedUrl
+    lateinit var viewModelListArtist: ViewModelListArtist
+    lateinit var viewModelAddLoadData: ViewModelAddLoadData
 
     lateinit var adapterList: AdapterList
     var z = 20  // переменная для увеличения значения для метода getData
     var recyclerView: RecyclerView? = null
     var staggeredGridLayoutManager: StaggeredGridLayoutManager? = null
     lateinit var lastVisibleItemPositions: IntArray // массив для помощи в передачи последнего видимомо элемента
-    var totalCountItem: Int = 0
 
     var flagLoading: Boolean = true // булева для работы с offset запросами +20 элементов в recyclerView
 
@@ -52,17 +56,18 @@ class FragmentList : Fragment() {
         if (orientation == Configuration.ORIENTATION_PORTRAIT) {
             view = layoutInflater.inflate(R.layout.fragment_list, myViewGroup, false)
 
-            myRecyclerLayoutManagerAdapter(view, 1, (activity as MainActivity?)?.lastVisibleItem)
+            myRecyclerLayoutManagerAdapter(view, 1)
         } else {
             view = layoutInflater.inflate(R.layout.fragment_list, myViewGroup, false)
 
-            myRecyclerLayoutManagerAdapter(view, 2, (activity as MainActivity?)?.lastVisibleItem)
+            myRecyclerLayoutManagerAdapter(view, 2)
         }
-        if ((activity as MainActivity?)?.hashMap?.size == 0) {
-            Log.e("333", "arrayList.size()=" + (activity as MainActivity?)?.hashMap?.size)
-            //getData(z);/// + 20;
-            val requestData = RequestData()
-            requestData.getData(z, context) /// + 20;
+
+        if (viewModelListArtist.getHashMapArtists().value!!.size == 0) {
+            // говорим viewmodel чтобы запросить данные по сети
+                // ПРИШЛОСЬ ПЕРЕДАТЬ КОНТЕКСТ, Я ТАК И НЕ ПОНЯЛ ПОЧЕМУ, В АНАЛОГИЧНОМ ПРОЕКТЕ ВСЕ РАБОТАЛО
+            viewModelListArtist.setParams(z, context)
+
         } else {
             Log.e("333", "FragmentHome arrayList.size()  НЕ ПУСТОЙ=")
         }
@@ -70,19 +75,13 @@ class FragmentList : Fragment() {
         return view // в onCreateView() возвращаем объект View, который является корневым элементом разметки фрагмента.
     }
 
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        Log.e("333", "-зашел FragmentHome onConfigurationChanged-")
-        // ДО СОЗДАНИЯ НОВОГО МАКЕТА ПИШЕМ ПЕРЕМЕННЫЕ В КОТОРЫЕ СОХРАНЯЕМ ЛЮБЫЕ ДАННЫЕ ИЗ ТЕКУЩИХ VIEW
-        // создать новый макет------------------------------
-        val view: View = initInterface()!!
-        // ПОСЛЕ СОЗДАНИЯ НОВОГО МАКЕТА ПЕРЕДАЕМ СОХРАНЕННЫЕ ДАННЫЕ В СТАРЫЕ(ТЕ КОТОРЫЕ ТЕКУЩИЕ) VIEW
-        // отображать новую раскладку на экране
-        myViewGroup?.addView(view)
-        super.onConfigurationChanged(newConfig)
-    }
-
     // метод для установки recyclerview, GridLayoutManager и AdapterListHome
-    fun myRecyclerLayoutManagerAdapter(view: View, column: Int, lastVisableItem: Int?) {
+    fun myRecyclerLayoutManagerAdapter(view: View, column: Int) {
+
+        viewModelListArtist = ViewModelProvider(this).get(ViewModelListArtist::class.java)
+        viewModelSharedUrl = ViewModelProvider(requireActivity()).get(ViewModelSharedUrl::class.java)
+        viewModelAddLoadData = ViewModelProvider(requireActivity()).get(ViewModelAddLoadData::class.java)
+
         recyclerView = view.findViewById(R.id.recyclerView)
         // setHasFixedSize(true), то подразумеваете, что размеры самого RecyclerView будет оставаться неизменными.
         // Если вы используете setHasFixedSize(false), то при каждом добавлении/удалении элементов RecyclerView
@@ -93,16 +92,36 @@ class FragmentList : Fragment() {
         staggeredGridLayoutManager = StaggeredGridLayoutManager(column, StaggeredGridLayoutManager.VERTICAL)
         recyclerView?.setLayoutManager(staggeredGridLayoutManager)
 
-        adapterList = AdapterList(this.requireActivity(), (activity as MainActivity?)!!.hashMap)
+        adapterList = AdapterList(this.requireActivity())
         recyclerView?.adapter = adapterList
+
+
+        adapterList.setOnItemClickListenerPageSong(object : AdapterList.onItemClickListenerPageSong {
+            override fun onItemClickPageSong(position: Int) {
+                getClickPositionPageSong(position)
+
+            }
+        })
+
+        adapterList.setOnItemClickListenerPageArtist(object : AdapterList.onItemClickListenerPageArtist{
+            override fun onItemClickPageArtist(position: Int) {
+                getClickPositionPageArtist(position)
+
+            }
+        })
+
+        // наблюдатель об изменениях в массиве, чтобы передать его в адаптер и обновить его
+        viewModelListArtist.getHashMapArtists().observe(requireActivity(), androidx.lifecycle.Observer {
+            it.let { adapterList.refreshListArtists(it) } // it - обновленный список
+        })
 
             // этот интерфейс сработает тогда когда заполниться hashmap
             // тут обновиться адаптер и измениться flagLoading
-        (activity as MainActivity).setInterFaceAdapter(object : MainActivity.InterFaceAdapter {
-            override fun myInterFaceAdapter() {
+        (requireActivity() as MainActivity).setInterFaceAdapter(object : MainActivity.MyInterFaceAdapter{
+            override fun methodMyInterFaceAdapter() {
                 Log.e("333", "-зашел setInterFaceAdapter(object : MainActivity-")
-                    adapterList.notifyDataSetChanged()
-                    flagLoading = false
+                adapterList.notifyDataSetChanged()
+                flagLoading = false
             }
         })
 
@@ -111,27 +130,23 @@ class FragmentList : Fragment() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 // эта часть отвечает за срабатывание запроса на получение дополнительных данных для записи в hashMap
                 // totalCountItem переменная всегода равно размеру hashmap в который добавляется + 20
-                totalCountItem = staggeredGridLayoutManager?.itemCount!!
+                viewModelAddLoadData.totalCountItem = staggeredGridLayoutManager?.itemCount!!
 
                 // эта часть отвечет только за передачу последнего видимомо элемента
                 lastVisibleItemPositions = staggeredGridLayoutManager?.findFirstVisibleItemPositions(null)!!
                 //Log.e("zzz","-lastVisibleItemPositions=" + lastVisibleItemPositions.length);
-                (context as MainActivity).lastVisibleItem = getMaxPosition(lastVisibleItemPositions)
-
-                Log.e("333", "-проверка totalCountItem-" + totalCountItem +
-                        "-(context as MainActivity).lastVisibleItem-" + (context as MainActivity).lastVisibleItem)
+                viewModelAddLoadData.lastVisibleItem = getMaxPosition(lastVisibleItemPositions)
 
                 // эта часть должна срабатывать при достижении прокрутки
                 // totalCountItem - общее, lastVisibleItem - последний видимый
-                if (flagLoading == false && (totalCountItem - 5) == (context as MainActivity).lastVisibleItem)
+                if (flagLoading == false && (viewModelAddLoadData.totalCountItem - 5) == viewModelAddLoadData.lastVisibleItem)
                 {
                     // тут я запускаю новый запрос даных на сервер с offset
                     val runnable = Runnable {
                         Log.e("333", "-зашел offset-")
                         z = z + 20 // переменная для увеличения значения offset
 
-                        val requestData: RequestData = RequestData()
-                        requestData.getData(z, context) /// + 20;
+                        viewModelListArtist.setParams(z, context)
                     }
                     Handler(Looper.getMainLooper()).postDelayed(runnable, 100)
 
@@ -144,16 +159,45 @@ class FragmentList : Fragment() {
         }
         recyclerView?.addOnScrollListener(mScrollListener)
 
-        val runnable = Runnable { // установка последнего элемента в главном потоке
-            try {
-                requireActivity().runOnUiThread {
-                    staggeredGridLayoutManager!!.scrollToPositionWithOffset(lastVisableItem!!, 0)
-                }
-            } catch (e: Exception) {
-                Log.e("333", "-try catch FragmentHome 1-$e")
-            }
-        }
-        Handler(Looper.getMainLooper()).postDelayed(runnable, 500)
+    }
+
+
+    fun getClickPositionPageSong(position: Int) {
+
+        val urlPageSong = viewModelListArtist.getHashMapArtists().value!![position]!!.urlPageSong
+
+        val fragmentWebView = FragmentWebView()
+        viewModelSharedUrl.sendMessageUrl(urlPageSong)
+        requireActivity().supportFragmentManager
+            .beginTransaction()
+            .setCustomAnimations(
+                R.animator.card_flip_right_enter,
+                R.animator.card_flip_right_exit,
+                R.animator.card_flip_left_enter,
+                R.animator.card_flip_left_exit
+            )
+            .replace(R.id.llFragWebView, fragmentWebView, "llFragWebView")
+            .addToBackStack("llFragWebView")
+            .commit()
+
+    }
+    fun getClickPositionPageArtist(position: Int) {
+
+        val urlPageArtist = viewModelListArtist.getHashMapArtists().value!![position]!!.urlPageArtist
+
+        val fragmentWebView = FragmentWebView()
+        viewModelSharedUrl.sendMessageUrl(urlPageArtist)
+        requireActivity().supportFragmentManager
+            .beginTransaction()
+            .setCustomAnimations(
+                R.animator.card_flip_right_enter,
+                R.animator.card_flip_right_exit,
+                R.animator.card_flip_left_enter,
+                R.animator.card_flip_left_exit
+            )
+            .replace(R.id.llFragWebView, fragmentWebView, "llFragWebView")
+            .addToBackStack("llFragWebView")
+            .commit()
     }
 
 }

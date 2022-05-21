@@ -1,13 +1,17 @@
-package com.dev_marinov.geniussonglyrics
+package com.dev_marinov.geniussonglyrics.model
 
 import android.content.Context
 import android.util.Log
+import com.dev_marinov.geniussonglyrics.data.ObjectList
+import com.dev_marinov.geniussonglyrics.presentation.MainActivity
 import okhttp3.*
 import org.json.JSONObject
 import java.io.IOException
 import java.lang.Exception
 
-class RequestData() {
+object RequestData {
+
+    var hashMap: HashMap<Int, ObjectList> = HashMap()
 
     fun getData(num: Int, context: Context?) { // метод получения данных из сети
         Log.e("333", "-зашел getData-")
@@ -60,14 +64,15 @@ class RequestData() {
                             val urlPageArtist = jsonObject.getJSONObject("response").getJSONArray("songs")
                                 .getJSONObject(n).getJSONObject("primary_artist").getString("url")
 
-                            (context as MainActivity?)?.hashMap?.set(n,
-                                ObjectList(newArtist2, urlPictureSong, title, urlPageSong, urlPageArtist))
+                            hashMap[n] = ObjectList(newArtist2, urlPictureSong, title, urlPageSong, urlPageArtist)
                         }
 
-                        (context as MainActivity?)?.runOnUiThread {
-                            MainActivity.interFaceAdapter.myInterFaceAdapter()
-                            Log.e("333", "должен был сработать myInterFaceAdapter()")
+                        //Log.e("Name", "hashMap" + hashMap.size)
+
+                        (context as MainActivity).runOnUiThread {
+                            MainActivity.myInterFaceAdapter.methodMyInterFaceAdapter()
                         }
+
 
                     } catch (e: Exception) {
                         Log.e("Name", "try catch$e")
@@ -78,4 +83,6 @@ class RequestData() {
             Log.e("333", "-try catch-$e")
         }
     }
+
+    fun getHashArtists() = hashMap
 }
