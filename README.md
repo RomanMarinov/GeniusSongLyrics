@@ -2,10 +2,18 @@
 
 ## Описание 
 Андроид приложение позволяет получить данные текстов песен по предоставленному списку от сети. 
-Реализован WebView, backstack, animation, поворот экрана, память recyclerView.
 
 ## Работа с кодом 
 Клиентская часть: android studio kotlin. Запрос api.
+
+- viewModel,<br/>
+- mvvm, <br/>
+- webView backstack,<br/>
+- animation start,<br/>
+- animation fragment,<br/>
+- animation recyclerView,<br/>
+- alertDialog,<br/>
+- asyncHttpClient<br/>
 
 ## Скрины экрана 
 
