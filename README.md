@@ -6,15 +6,18 @@
 ## Работа с кодом 
 Клиентская часть: android studio kotlin. Запрос api.
 
+- clean,<br/>
 - viewModel,<br/>
 - mvvm, <br/>
+- di hilt, <br/>
+- navigation, <br/>
+- databinding, <br/>
 - webView backstack,<br/>
-- animation start,<br/>
-- animation fragment,<br/>
-- animation recyclerView,<br/>
-- alertDialog,<br/>
-- asyncHttpClient<br/>
+- animation,<br/>
+- recyclerViews,<br/>
+- dialogs,<br/>
+- retrofit<br/>
 
-## Скрины экрана 
+## Демонстрация 
 
 https://user-images.githubusercontent.com/61028366/166451388-164481f7-6014-4e9a-8966-62bd044749ce.mp4
