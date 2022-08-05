@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigation_graph"
+    app:startDestination="@id/splashFragment">
+
+    <fragment
+        android:id="@+id/splashFragment"
+        android:name="com.dev_marinov.geniussonglyrics.presentation.splash.SplashFragment"
+        android:label="fragment_splash"
+        tools:layout="@layout/fragment_splash" >
+        <action
+            android:id="@+id/action_splashFragment_to_artistsFragment"
+            app:destination="@id/artistsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/artistsFragment"
+        android:name="com.dev_marinov.geniussonglyrics.presentation.artists.ArtistsFragment"
+        android:label="ArtistsFragment">
+        <action
+            android:id="@+id/action_artistsFragment_to_webViewFragment"
+            app:destination="@id/webViewFragment"
+            app:enterAnim="@animator/card_flip_right_enter"
+            app:exitAnim="@animator/card_flip_right_exit"
+            app:popEnterAnim="@animator/card_flip_left_enter"
+            app:popExitAnim="@animator/card_flip_left_exit" />
+        <action
+            android:id="@+id/action_artistsFragment_to_exitDialogFragment"
+            app:destination="@id/exitDialogFragment" />
+    </fragment>
+    <dialog
+        android:id="@+id/exitDialogFragment"
+        android:name="com.dev_marinov.geniussonglyrics.presentation.exitdialog.ExitDialogFragment"
+        android:label="ExitDialogFragment" />
+    <fragment
+        android:id="@+id/webViewFragment"
+        android:name="com.dev_marinov.geniussonglyrics.presentation.webview.WebViewFragment"
+        android:label="WebViewFragment" >
+        <argument
+            android:name="url"
+            app:argType="string"
+            android:defaultValue='' />
+    </fragment>
+</navigation>

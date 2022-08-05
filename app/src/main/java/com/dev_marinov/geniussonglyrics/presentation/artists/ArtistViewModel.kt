@@ -6,15 +6,17 @@ import com.dev_marinov.geniussonglyrics.SingleLiveEvent
 import com.dev_marinov.geniussonglyrics.domain.IArtistSongRepository
 import com.dev_marinov.geniussonglyrics.domain.Song
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import javax.inject.Inject
 
 @HiltViewModel
 class ArtistViewModel @Inject constructor(
     private val artistSongRepository: IArtistSongRepository
 ) : ViewModel() {
+
+    private val handler = CoroutineExceptionHandler { _, throwable ->
+        Log.d("333", "throwable = "+ throwable.toString())
+    }
 
     private val _artist: MutableLiveData<List<Song>> = MutableLiveData()
     val artist: LiveData<List<Song>> = _artist
@@ -47,7 +49,7 @@ class ArtistViewModel @Inject constructor(
     private fun getArtists(num: Int){
         _flagLoading.value = true
 
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.IO + handler) {
             artistSongRepository.getArtistsSongs(num).let {
                 val list: MutableList<Song> = _artist.value?.toMutableList()?: mutableListOf()
                 list.addAll(it)
